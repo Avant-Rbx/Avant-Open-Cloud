@@ -1,5 +1,9 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Avant.Open.Cloud.Configuration;
 using Avant.Open.Cloud.Diagnostic;
 using Microsoft.Extensions.Logging;
 
@@ -59,6 +63,24 @@ public class Program
             return -1;
         }
         Logger.Debug($"Using configuration file at: {configurationFilePath}");
+        
+        // Read and verify the configuration.
+        AvantConfiguration configuration;
+        try
+        {
+            configuration = JsonSerializer.Deserialize<AvantConfiguration>(await File.ReadAllTextAsync(configurationFilePath))!;
+        }
+        catch (JsonException e)
+        {
+            Logger.Error($"Error reading configuration file: {e.Message}");
+            return -1;
+        }
+        Logger.Debug("Configuration file read.");
+        if (configuration.VerifyConfiguration().Count > 0)
+        {
+            return -1;
+        }
+        Logger.Debug("Configuration file verified.");
         
         // Return the success exit code.
         return 0;
