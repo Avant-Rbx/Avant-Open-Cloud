@@ -1,8 +1,10 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Avant.Open.Cloud.Action;
 using Avant.Open.Cloud.Configuration;
 using Avant.Open.Cloud.Diagnostic;
 using Microsoft.Extensions.Logging;
@@ -81,6 +83,24 @@ public class Program
             return -1;
         }
         Logger.Debug("Configuration file verified.");
+        
+        // Read the Open Cloud API key.
+        var openCloudApiKey = Environment.GetEnvironmentVariable(configuration.OpenCloud!.ApiKeyEnvironmentVariable!);
+        if (openCloudApiKey == null)
+        {
+            Logger.Error($"Open Cloud API key environment variable \"{configuration.OpenCloud!.ApiKeyEnvironmentVariable}\" not set.");
+            return -1;
+        }
+        
+        // Build the project.
+        var projectFilePath = Path.GetDirectoryName(configurationFilePath)!;
+        var rojoBuild = new RojoBuild(projectFilePath, configuration.RojoBuildStrategy!);
+        var buildFile = await rojoBuild.BuildProjectAsync();
+        if (buildFile == null)
+        {
+            Logger.Error("Rojo build failed.");
+            return -1;
+        }
         
         // Return the success exit code.
         return 0;

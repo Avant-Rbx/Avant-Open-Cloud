@@ -61,10 +61,6 @@ public class AvantConfiguration
         }
         else
         {
-            if (this.RojoBuildStrategy.AvantInjectionDirectory == null)
-            {
-                validationErrors.Add("RojoBuildStrategy.AvantInjectionDirectory is not configured.");
-            }
             if (this.RojoBuildStrategy.ProjectFile == null)
             {
                 validationErrors.Add("RojoBuildStrategy.ProjectFile is not configured.");

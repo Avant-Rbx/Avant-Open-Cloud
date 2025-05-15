@@ -38,7 +38,6 @@ public class AvantConfigurationTest
             OpenCloud = new OpenCloudConfiguration(),
         }.VerifyConfiguration(), Is.EqualTo(new List<string>()
         {
-            "RojoBuildStrategy.AvantInjectionDirectory is not configured.",
             "RojoBuildStrategy.ProjectFile is not configured.",
             "OpenCloud.ApiKeyEnvironmentVariable is not configured.",
             "OpenCloud.UniverseId is not configured.",
