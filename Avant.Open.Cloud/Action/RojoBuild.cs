@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avant.Open.Cloud.Configuration;
 using Avant.Open.Cloud.Diagnostic;
@@ -67,10 +69,34 @@ public class RojoBuild
         }
         Logger.Debug($"Using Rojo at: {rojoPath}");
         
-        // Add the Avant runner.
+        // Add the Avant runtime.
+        string? avantRuntimeInjectPath = null;
         if (this.RojoBuildStrategy.AvantInjectionDirectory != null)
         {
-            // TODO
+            // Find the Avant runtime.
+            var assembly = this.GetType().Assembly;
+            var avantRuntimeFilePath = assembly.GetManifestResourceNames().FirstOrDefault(name => Regex.Match(name, "AvantRuntime\\.").Success);
+            if (avantRuntimeFilePath == null)
+            {
+                Logger.Error("Embedded AvantRuntime.rbxmx or AvantRuntime.rbxm not found. If compiled from source, this can be fetched from GitHub (https://github.com/Avant-Rbx/Avant-Runtime/releases) and added to Avant.Open.Cloud/Resources.");
+                return null;
+            }
+            await using var avantRuntimeFileStream = assembly.GetManifestResourceStream(avantRuntimeFilePath)!;
+            
+            // Copy the runtime.
+            avantRuntimeInjectPath = Path.Combine(this.WorkingDirectory, this.RojoBuildStrategy.AvantInjectionDirectory,
+                $"AvantRuntime{Path.GetExtension(avantRuntimeFilePath)}");
+            if (!File.Exists(avantRuntimeInjectPath))
+            {
+                Logger.Debug($"Injecting AvantRuntime to: {avantRuntimeInjectPath}");
+                var avantRuntimeInjectFile = File.Create(avantRuntimeInjectPath);
+                await avantRuntimeFileStream.CopyToAsync(avantRuntimeInjectFile);
+                avantRuntimeInjectFile.Close();
+            }
+            else
+            {
+                Logger.Debug($"AvantRuntime already found at: {avantRuntimeInjectPath}");
+            }
         }
         
         // Build the project.
@@ -99,7 +125,11 @@ public class RojoBuild
         finally
         {
             // Remove the Avant runner.
-            // TODO
+            if (avantRuntimeInjectPath != null && File.Exists(avantRuntimeInjectPath))
+            {
+                Logger.Debug($"Deleting injected AvantRuntime to: {avantRuntimeInjectPath}");
+                File.Delete(avantRuntimeInjectPath);
+            }
         }
         
         // Return the build path.
