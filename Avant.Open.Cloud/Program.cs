@@ -95,14 +95,18 @@ public class Program
         // Build the project.
         var projectFilePath = Path.GetDirectoryName(configurationFilePath)!;
         var rojoBuild = new RojoBuild(projectFilePath, configuration.RojoBuildStrategy!);
-        var buildFile = await rojoBuild.BuildProjectAsync();
-        if (buildFile == null)
+        var placeFilePath = await rojoBuild.BuildProjectAsync();
+        if (placeFilePath == null)
         {
             Logger.Error("Rojo build failed.");
             return -1;
         }
         
-        // Return the success exit code.
-        return 0;
+        // Run the test using Open Cloud Luau execution.
+        var openCloudExecution = new OpenCloudExecution(openCloudApiKey, configuration.OpenCloud!);
+        var testsPassed = await openCloudExecution.RunOpenCloudExecutionAsync(placeFilePath);
+        
+        // Return the exit code.
+        return testsPassed ? 0 : 1;
     }
 }
