@@ -70,7 +70,7 @@ public class Program
         AvantConfiguration configuration;
         try
         {
-            configuration = JsonSerializer.Deserialize<AvantConfiguration>(await File.ReadAllTextAsync(configurationFilePath))!;
+            configuration = JsonSerializer.Deserialize<AvantConfiguration>(await File.ReadAllTextAsync(configurationFilePath), AvantConfigurationJsonContext.Default.AvantConfiguration)!;
         }
         catch (JsonException e)
         {
