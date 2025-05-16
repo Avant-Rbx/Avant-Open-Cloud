@@ -109,7 +109,10 @@ public class OpenCloudExecution
                 if (logSession.StructuredMessages == null) continue;
                 foreach (var log in logSession.StructuredMessages)
                 {
-                    consoleOutput.LogMessage($"[{log.CreateTime:HH:mm:ss}] {log.Message}", MessageTypeToLoveLevel[log.MessageType]);
+                    foreach (var line in log.Message.Split("\n"))
+                    {
+                        consoleOutput.LogMessage($"[{log.CreateTime:HH:mm:ss}] {line}", MessageTypeToLoveLevel[log.MessageType]);
+                    }
                 }
             }
             await consoleOutput.WaitForCompletionAsync();
