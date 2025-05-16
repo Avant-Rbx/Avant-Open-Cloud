@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avant.Open.Cloud.Configuration;
@@ -11,6 +12,16 @@ namespace Avant.Open.Cloud.Action;
 
 public class RojoBuild
 {
+    /// <summary>
+    /// Tag to download for the Avant Runtime.
+    /// </summary>
+    public const string AvantRuntimeTag = "V.1.1.0";
+    
+    /// <summary>
+    /// URL to download the Avant Runtime if a bundled version isn't included.
+    /// </summary>
+    public const string AvantRuntimeDownloadUrl = $"https://github.com/Avant-Rbx/Avant-Runtime/releases/download/{AvantRuntimeTag}/AvantRuntime.rbxmx";
+    
     /// <summary>
     /// Working directory of the Rojo project.
     /// </summary>
@@ -51,6 +62,7 @@ public class RojoBuild
         {
             var newRojoPath = Path.Combine(systemPathEntry, "rojo");
             var newRojoExePath = Path.Combine(systemPathEntry, "rojo.exe");
+            Logger.Debug($"Checking for Rojo in: {systemPathEntry}");
             if (File.Exists(newRojoPath))
             {
                 rojoPath = newRojoPath;
@@ -76,12 +88,29 @@ public class RojoBuild
             // Find the Avant runtime.
             var assembly = this.GetType().Assembly;
             var avantRuntimeFilePath = assembly.GetManifestResourceNames().FirstOrDefault(name => Regex.Match(name, "AvantRuntime\\.").Success);
-            if (avantRuntimeFilePath == null)
+            Stream? avantRuntimeFileStream = null;
+            if (avantRuntimeFilePath != null)
             {
-                Logger.Error("Embedded AvantRuntime.rbxmx or AvantRuntime.rbxm not found. If compiled from source, this can be fetched from GitHub (https://github.com/Avant-Rbx/Avant-Runtime/releases) and added to Avant.Open.Cloud/Resources.");
-                return null;
+                // Read the bundled runtime.
+                Logger.Debug("Using bundled Avant Runtime.");
+                avantRuntimeFileStream = assembly.GetManifestResourceStream(avantRuntimeFilePath)!;
             }
-            await using var avantRuntimeFileStream = assembly.GetManifestResourceStream(avantRuntimeFilePath)!;
+            else
+            {
+                // Download the runtime.
+                avantRuntimeFilePath = $"AvantRuntime-{AvantRuntimeTag}{Path.GetExtension(AvantRuntimeDownloadUrl)}";
+                var downloadPath = Path.Combine(Path.GetTempPath(), avantRuntimeFilePath);
+                if (!File.Exists(downloadPath))
+                {
+                    Logger.Debug($"Downloading Avant Runtime from {AvantRuntimeDownloadUrl} to: {downloadPath}");
+                    var client = new HttpClient();
+                    await File.WriteAllBytesAsync(downloadPath, await (await client.GetAsync(AvantRuntimeDownloadUrl)).Content.ReadAsByteArrayAsync());
+                }
+                
+                // Read the runtime.
+                Logger.Debug($"Using downloaded Avant Runtime from: {downloadPath}");
+                avantRuntimeFileStream = File.Open(downloadPath, FileMode.Open)!;
+            }
             
             // Copy the runtime.
             avantRuntimeInjectPath = Path.Combine(this.WorkingDirectory, this.RojoBuildStrategy.AvantInjectionDirectory,

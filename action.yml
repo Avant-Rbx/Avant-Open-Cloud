@@ -1,0 +1,30 @@
+name: "Avant Open Cloud"
+description: "Runs Luau unit tests using Roblox's Open Cloud Luau execution."
+author: "TheNexusAvenger"
+branding:
+  icon: activity
+  color: blue
+inputs:
+  configuration-file:
+    description:
+      "Configuration file for Avant Runtime."
+    required: false
+    default: "avant.json"
+outputs:
+  results:
+    description: "Test session results"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: Avant-Rbx/Avant-Open-Cloud
+        path: "avant-open-cloud"
+    - name: Set Up .NET 9.0
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    - name: Run Avant Open Cloud
+      run: |
+        dotnet run --project ./avant-open-cloud/Avant.Open.Cloud/Avant.Open.Cloud.csproj ${{ inputs.configuration-file }}
+      shell: bash
