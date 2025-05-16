@@ -17,6 +17,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.x'
-    # Run the .NEt unit tests.
+    # Run the .NET unit tests.
     - name: Run .NET Tests
       run: dotnet test
