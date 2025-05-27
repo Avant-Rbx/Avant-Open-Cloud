@@ -13,7 +13,7 @@ if not AvantRuntimeFolder then
 end
 
 --Run the tests.
-local TestResults = require(AvantRuntimeFolder:FindFirstChild("RunTests")) :: any
+local TestResults = require(AvantRuntimeFolder:FindFirstChild("RunTests"))() :: any
 if TestResults.FAILED > 0 then
 	error(`There were {TestResults.FAILED} test failure(s).`)
 end

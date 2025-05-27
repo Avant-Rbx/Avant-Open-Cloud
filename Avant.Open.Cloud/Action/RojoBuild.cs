@@ -15,7 +15,7 @@ public class RojoBuild
     /// <summary>
     /// Tag to download for the Avant Runtime.
     /// </summary>
-    public const string AvantRuntimeTag = "V.1.1.0";
+    public const string AvantRuntimeTag = "V.1.2.0";
     
     /// <summary>
     /// URL to download the Avant Runtime if a bundled version isn't included.
