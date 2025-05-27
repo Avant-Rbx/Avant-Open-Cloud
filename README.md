@@ -72,8 +72,6 @@ AvantOpenCloud ./SomeFile.json --debug
 ```
 
 ### Running (GitHub Action)
-⚠️ No tagged releases currently exist.
-
 Before using the action [a GitHub Action Secret must be created](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
 with the Open Cloud API key created before. The name does not need to
 match the variable name in the JSON configuration.
@@ -81,7 +79,7 @@ match the variable name in the JSON configuration.
 When using `avant.json`, the following can be added to the workflow:
 ```yaml
 - name: Run Avant Open Cloud # Name can be anything.
-  uses: Avant-Rbx/Avant-Open-Cloud@main
+  uses: Avant-Rbx/Avant-Open-Cloud@V.1.0.0
   env:
     # Left side MUST match the JSON file. Right side MUST match the name of the GitHub Action secret.
     MY_API_KEY_ENVIRONMENT_VARIABLE: ${{ secrets.MY_API_KEY }}
@@ -90,7 +88,7 @@ When using `avant.json`, the following can be added to the workflow:
 For custom file names, add `with` and provide the file path.
 ```yaml
 - name: Run Avant Open Cloud # Name can be anything.
-  uses: Avant-Rbx/Avant-Open-Cloud@main
+  uses: Avant-Rbx/Avant-Open-Cloud@V.1.0.0
   env:
     # Left side MUST match the JSON file. Right side MUST match the name of the GitHub Action secret.
     MY_API_KEY_ENVIRONMENT_VARIABLE: ${{ secrets.MY_API_KEY }}
