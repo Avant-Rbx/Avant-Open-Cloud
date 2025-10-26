@@ -51,7 +51,7 @@ with open("Avant.Open.Cloud/Action/RojoBuild.cs") as file:
     avantRuntimeTag = re.findall(r"AvantRuntimeTag = \"([^\"]+)\"", file.read())[0]
 
 # Download Avant Runtime.
-avantRuntimeUrl = "https://github.com/Avant-Rbx/Avant-Runtime/releases/download/V.1.2.0/AvantRuntime.rbxmx"
+avantRuntimeUrl = "https://github.com/Avant-Rbx/Avant-Runtime/releases/download/V.1.3.0/AvantRuntime.rbxmx"
 print("Downloading Avant Runtime from " + avantRuntimeUrl)
 urllib.request.urlretrieve(avantRuntimeUrl, "Avant.Open.Cloud/Resources/AvantRuntime.rbxmx")
 

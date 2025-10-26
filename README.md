@@ -79,7 +79,7 @@ match the variable name in the JSON configuration.
 When using `avant.json`, the following can be added to the workflow:
 ```yaml
 - name: Run Avant Open Cloud # Name can be anything.
-  uses: Avant-Rbx/Avant-Open-Cloud@V.1.0.0
+  uses: Avant-Rbx/Avant-Open-Cloud@V.1.1.0
   env:
     # Left side MUST match the JSON file. Right side MUST match the name of the GitHub Action secret.
     MY_API_KEY_ENVIRONMENT_VARIABLE: ${{ secrets.MY_API_KEY }}
@@ -88,7 +88,7 @@ When using `avant.json`, the following can be added to the workflow:
 For custom file names, add `with` and provide the file path.
 ```yaml
 - name: Run Avant Open Cloud # Name can be anything.
-  uses: Avant-Rbx/Avant-Open-Cloud@V.1.0.0
+  uses: Avant-Rbx/Avant-Open-Cloud@V.1.1.0
   env:
     # Left side MUST match the JSON file. Right side MUST match the name of the GitHub Action secret.
     MY_API_KEY_ENVIRONMENT_VARIABLE: ${{ secrets.MY_API_KEY }}
