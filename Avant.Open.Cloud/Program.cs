@@ -93,9 +93,12 @@ public class Program
         }
         
         // Build the project.
+        // When a runtime is injected, a suffix is added to ensure the injected one is used.
+        // The suffix is not added when the project provides the runtime.
+        var runtimeSuffix = configuration.RojoBuildStrategy!.AvantInjectionDirectory != null ? $"_{Guid.NewGuid().ToString()}" : "";
         var projectFilePath = Path.GetDirectoryName(configurationFilePath)!;
         var rojoBuild = new RojoBuild(projectFilePath, configuration.RojoBuildStrategy!);
-        var placeFilePath = await rojoBuild.BuildProjectAsync();
+        var placeFilePath = await rojoBuild.BuildProjectAsync(runtimeSuffix);
         if (placeFilePath == null)
         {
             Logger.Error("Rojo build failed.");
@@ -104,7 +107,7 @@ public class Program
         
         // Run the test using Open Cloud Luau execution.
         var openCloudExecution = new OpenCloudExecution(openCloudApiKey, configuration.OpenCloud!);
-        var testsPassed = await openCloudExecution.RunOpenCloudExecutionAsync(placeFilePath);
+        var testsPassed = await openCloudExecution.RunOpenCloudExecutionAsync(placeFilePath, runtimeSuffix);
         
         // Return the exit code.
         return testsPassed ? 0 : 1;

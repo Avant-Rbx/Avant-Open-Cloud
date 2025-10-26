@@ -64,8 +64,9 @@ public class OpenCloudExecution
     /// Runs Open Cloud Luau execution.
     /// </summary>
     /// <param name="placeFilePath">Path of the place file to upload.</param>
+    /// <param name="runtimeSuffix">Suffix for the file name to add to ensure the runner's runtime is used.</param>
     /// <returns>Whether the execution was successful.</returns>
-    public async Task<bool> RunOpenCloudExecutionAsync(string placeFilePath)
+    public async Task<bool> RunOpenCloudExecutionAsync(string placeFilePath, string runtimeSuffix)
     {
         try
         {
@@ -78,7 +79,7 @@ public class OpenCloudExecution
                 return false;
             }
             await using var runTestFileStream = assembly.GetManifestResourceStream(runTestFilePath)!;
-            var runTestFile = await new StreamReader(runTestFileStream).ReadToEndAsync();
+            var runTestFile = (await new StreamReader(runTestFileStream).ReadToEndAsync()).Replace("{RuntimeSuffix}", runtimeSuffix);
             
             // Publish the place file.
             var universeId = this.OpenCloudConfiguration.UniverseId!.Value;

@@ -30,7 +30,7 @@ public class OpenCloudExecutionTest
         this._clientShim.AddRequest($"https://apis.roblox.com/cloud/v2/TestPath", HttpStatusCode.OK, "{\"path\":\"TestPath\",\"state\":\"COMPLETE\"}");
         this._clientShim.AddRequest($"https://apis.roblox.com/cloud/v2/TestPath/logs?view=STRUCTURED", HttpStatusCode.OK, "{\"luauExecutionSessionTaskLogs\":[{\"structuredMessages\":[]}]}");
 
-        Assert.That(this._openCloudExecution.RunOpenCloudExecutionAsync(Path.GetTempFileName()).Result, Is.True);
+        Assert.That(this._openCloudExecution.RunOpenCloudExecutionAsync(Path.GetTempFileName(), "_TestSuffix").Result, Is.True);
     }
 
     [Test]
@@ -41,7 +41,7 @@ public class OpenCloudExecutionTest
         this._clientShim.AddRequest($"https://apis.roblox.com/cloud/v2/TestPath", HttpStatusCode.OK, "{\"path\":\"TestPath\",\"state\":\"FAILED\"}");
         this._clientShim.AddRequest($"https://apis.roblox.com/cloud/v2/TestPath/logs?view=STRUCTURED", HttpStatusCode.OK, "{\"luauExecutionSessionTaskLogs\":[{}]}");
 
-        Assert.That(this._openCloudExecution.RunOpenCloudExecutionAsync(Path.GetTempFileName()).Result, Is.False);
+        Assert.That(this._openCloudExecution.RunOpenCloudExecutionAsync(Path.GetTempFileName(), "_TestSuffix").Result, Is.False);
     }
 
     [Test]
@@ -49,6 +49,6 @@ public class OpenCloudExecutionTest
     {
         this._clientShim.AddRequest($"https://apis.roblox.com/universes/v1/123/places/456/versions?versionType=Saved", HttpStatusCode.Unauthorized, "{}");
         
-        Assert.That(this._openCloudExecution.RunOpenCloudExecutionAsync(Path.GetTempFileName()).Result, Is.False);
+        Assert.That(this._openCloudExecution.RunOpenCloudExecutionAsync(Path.GetTempFileName(), "_TestSuffix").Result, Is.False);
     }
 }

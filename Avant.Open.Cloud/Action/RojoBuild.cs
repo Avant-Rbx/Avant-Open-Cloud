@@ -46,8 +46,9 @@ public class RojoBuild
     /// <summary>
     /// Builds the project.
     /// </summary>
+    /// <param name="runtimeSuffix">Suffix for the file name to add to ensure the runner's runtime is used.</param>
     /// <returns>The Roblox place file if the build completed.</returns>
-    public async Task<string?> BuildProjectAsync()
+    public async Task<string?> BuildProjectAsync(string runtimeSuffix)
     {
         // Get the paths.
         var projectFilePath = Path.Combine(this.WorkingDirectory, this.RojoBuildStrategy.ProjectFile!);
@@ -114,7 +115,7 @@ public class RojoBuild
             
             // Copy the runtime.
             avantRuntimeInjectPath = Path.Combine(this.WorkingDirectory, this.RojoBuildStrategy.AvantInjectionDirectory,
-                $"AvantRuntime{Path.GetExtension(avantRuntimeFilePath)}");
+                $"AvantRuntime{runtimeSuffix}{Path.GetExtension(avantRuntimeFilePath)}");
             if (!File.Exists(avantRuntimeInjectPath))
             {
                 Logger.Debug($"Injecting AvantRuntime to: {avantRuntimeInjectPath}");

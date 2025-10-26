@@ -4,8 +4,10 @@
 --Find the Avant runtime.
 local AvantRuntimeFolder: Folder? = nil
 for _, AvantRuntimeFolderCandidate in game:GetDescendants() do
-	if AvantRuntimeFolderCandidate.Name ~= "AvantRuntime" then continue end
+	if AvantRuntimeFolderCandidate.Name ~= "AvantRuntime{RuntimeSuffix}" then continue end
+	if not AvantRuntimeFolderCandidate:FindFirstChild("RunTests") then continue end
 	AvantRuntimeFolder = AvantRuntimeFolderCandidate
+	AvantRuntimeFolder.Name = "AvantRuntime"
 	break
 end
 if not AvantRuntimeFolder then
